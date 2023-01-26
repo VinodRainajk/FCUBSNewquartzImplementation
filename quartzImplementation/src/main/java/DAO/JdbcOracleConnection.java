@@ -48,11 +48,11 @@ public class JdbcOracleConnection {
 
             if (conn2 != null) {
                 System.out.println("Connected with connection #2");
-                String sql = "select id,message,queue_name from Custom_Notification where nvl(status,'N') = 'N'  order by id";
+                String sql = "select id,message,queue_name from Custom_Notification where nvl(status,'U') = 'U'  order by id";
                // Statement statement = conn2.createStatement();
                // ResultSet result = statement.executeQuery(sql);
                 PreparedStatement pstmt =  conn2.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-                pstmt.setFetchSize(1000);
+                pstmt.setFetchSize(5000);
                 ResultSet result = pstmt.executeQuery();
                 int count = 0;
 
