@@ -1,0 +1,20 @@
+Create table Custom_Notification
+(id number,
+ message varchar2(4000),
+ queue_name varchar2(1000));
+
+
+ select count(*) from
+ Custom_Notification
+
+
+ Declare
+ indx number;
+ begin
+   for indx in 1..10000 loop
+     insert into Custom_Notification(id,message,queue_name ) values (indx,'the message number is '||indx,'');
+   end loop;
+
+ end;
+
+
