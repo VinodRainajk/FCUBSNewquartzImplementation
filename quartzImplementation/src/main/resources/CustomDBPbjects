@@ -1,7 +1,8 @@
 Create table Custom_Notification
 (id number,
  message varchar2(4000),
- queue_name varchar2(1000));
+ queue_name varchar2(1000),
+ status varchar2(1));
 
 
  select count(*) from
