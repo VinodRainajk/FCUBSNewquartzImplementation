@@ -1,26 +1,25 @@
 package threading;
 
+import Model.CustomNotification;
+
 import static java.lang.Thread.currentThread;
 
 public class threadDistributor implements Runnable{
 
-    private Integer indexval;
+    private CustomNotification customNotification;
 
-    public threadDistributor(Integer indexval) {
-        this.indexval = indexval;
+    public threadDistributor(CustomNotification customNotification)
+    {
+        this.customNotification = customNotification;
     }
 
-    public Integer getIndexval() {
-        return indexval;
-    }
-
-    public void setIndexval(Integer indexval) {
-        this.indexval = indexval;
+    public CustomNotification getcustomNotification() {
+        return customNotification;
     }
 
     @Override
     public void run() {
-        System.out.println("The value sent as a param is "+indexval);
+        System.out.println("The value sent as a param is "+customNotification.getMessage());
         System.out.println("Thread executing value is  "+currentThread().getId()
         );
     }
