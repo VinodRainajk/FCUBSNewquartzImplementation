@@ -12,16 +12,9 @@ import java.util.Properties;
 
 public class JdbcOracleConnection {
 
-    public static void main(String[] args) {
 
-        Connection conn2 = null;
-       // loadProperties loadproperties = new loadProperties();
-        //Integer limitRecord = Integer.valueOf(loadProperties.getPropertyValue("limitRecord"));
-        Integer limitRecord = 100;
-        List<CustomNotification> customNotificationList = new ArrayList<>();
-        QuartzExecutorService quartzExecutorService = QuartzExecutorService.getQuartzExecutorService();
-        mainExecutor mainexecutor = new mainExecutor(quartzExecutorService);
-
+    public static Connection getconnection() {
+        Connection conn = null;
         try {
             Class.forName("oracle.jdbc.OracleDriver");
 
@@ -30,11 +23,32 @@ public class JdbcOracleConnection {
             String dbURL2 = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
             String username = "dev";
             String password = "dev";
-            conn2 = DriverManager.getConnection(dbURL2, username, password);
+            conn = DriverManager.getConnection(dbURL2, username, password);
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }finally {
+            return conn;
+        }
+    }
+
+
+    public static void main(String[] args) {
+
+        Connection conn2 = getconnection();
+       // loadProperties loadproperties = new loadProperties();
+        //Integer limitRecord = Integer.valueOf(loadProperties.getPropertyValue("limitRecord"));
+        Integer limitRecord = 100;
+        List<CustomNotification> customNotificationList = new ArrayList<>();
+        QuartzExecutorService quartzExecutorService = QuartzExecutorService.getQuartzExecutorService();
+        mainExecutor mainexecutor = new mainExecutor(quartzExecutorService);
+
+        try {
 
             if (conn2 != null) {
                 System.out.println("Connected with connection #2");
-                String sql = "select id,message,queue_name from Custom_Notification order by id";
+                String sql = "select id,message,queue_name from Custom_Notification where nvl(status,'N') = 'N'  order by id";
                // Statement statement = conn2.createStatement();
                // ResultSet result = statement.executeQuery(sql);
                 PreparedStatement pstmt =  conn2.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -65,8 +79,7 @@ public class JdbcOracleConnection {
 
             }
 
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
