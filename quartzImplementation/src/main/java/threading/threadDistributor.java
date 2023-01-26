@@ -26,6 +26,9 @@ public class threadDistributor implements Runnable{
     public void run() {
         System.out.println("The value sent as a param is " + customNotification.getMessage());
         System.out.println("Thread executing value is  " + currentThread().getId());
+
+        //code to push message to Kafka/MQ
+        // Message sent successfull
         Connection conn = null;
         try {
             conn = JdbcOracleConnection.getconnection();
