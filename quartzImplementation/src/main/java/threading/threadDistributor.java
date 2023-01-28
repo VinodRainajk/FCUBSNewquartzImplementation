@@ -38,10 +38,7 @@ public class threadDistributor implements Runnable{
             statement.setString(1, "P");
             statement.setString(2, customNotification.getId());
             int rowsUpdated = statement.executeUpdate();
-            //conn.commit();
-            if (rowsUpdated > 0) {
-                System.out.println("An existing user was updated successfully!");
-            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {

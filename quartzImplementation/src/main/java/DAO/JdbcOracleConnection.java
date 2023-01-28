@@ -14,6 +14,7 @@ public class JdbcOracleConnection {
 
 
     public static Connection getconnection() {
+
         Connection conn = null;
         try {
             Class.forName("oracle.jdbc.OracleDriver");
@@ -34,8 +35,8 @@ public class JdbcOracleConnection {
     }
 
 
-    public static void main(String[] args) {
-
+    public void processMessage() {
+        System.out.println("Inside  processMessage");
         Connection conn2 = getconnection();
        // loadProperties loadproperties = new loadProperties();
         //Integer limitRecord = Integer.valueOf(loadProperties.getPropertyValue("limitRecord"));
@@ -57,7 +58,7 @@ public class JdbcOracleConnection {
                 int count = 0;
 
                 while (result.next()){
-                    System.out.println("trip ");
+                    System.out.println("trip second ");
                     String id = result.getString("id");
                     String message = result.getString("message");
                     String queue_name = result.getString("queue_name");
@@ -76,6 +77,7 @@ public class JdbcOracleConnection {
                     mainexecutor.processMessage(customNotificationList);
 
                 }
+                System.out.println("Comming out of message push ");
 
             }
 
@@ -84,6 +86,7 @@ public class JdbcOracleConnection {
             ex.printStackTrace();
         } finally {
             try {
+                System.out.println("shutting down the executor ");
                 quartzExecutorService.getExecutorService().shutdown();
                 if (conn2 != null && !conn2.isClosed()) {
                     conn2.close();
