@@ -31,7 +31,8 @@ public class threadDistributor implements Runnable{
         // Message sent successfull
         Connection conn = null;
         try {
-            conn = NotificationProcessMessage.getconnection();
+            NotificationProcessMessage notificationProcessMessage = new NotificationProcessMessage();
+              conn = notificationProcessMessage.getconnection();
             String sql = "UPDATE Custom_Notification SET status=? where id = ?";
             PreparedStatement statement = conn.prepareStatement(sql);
 

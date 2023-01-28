@@ -2,6 +2,7 @@ package DAO;
 
 import Model.CustomNotification;
 import threading.QuartzExecutorService;
+import threading.loadProperties;
 import threading.mainExecutor;
 
 import java.sql.*;
@@ -11,7 +12,7 @@ import java.util.List;
 public class NotificationProcessMessage {
 
 
-    public static Connection getconnection() {
+    public  Connection getconnection() {
 
         Connection conn = null;
         try {
@@ -36,9 +37,9 @@ public class NotificationProcessMessage {
     public void processMessage() {
         System.out.println("Inside  processMessage");
         Connection conn2 = getconnection();
-       // loadProperties loadproperties = new loadProperties();
-        //Integer limitRecord = Integer.valueOf(loadProperties.getPropertyValue("limitRecord"));
-        Integer limitRecord = 100;
+        loadProperties loadproperties = new loadProperties();
+        Integer limitRecord = Integer.valueOf(loadproperties.getPropertyValue("limitRecord"));
+        //Integer limitRecord = 100;
         List<CustomNotification> customNotificationList = new ArrayList<>();
         QuartzExecutorService quartzExecutorService = QuartzExecutorService.getQuartzExecutorService();
         mainExecutor mainexecutor = new mainExecutor(quartzExecutorService);

@@ -4,6 +4,7 @@ Create table Custom_Notification
  queue_name varchar2(1000),
  status varchar2(1));
 
+ create table Custom_Job_Status(job_status varchar2(1))
 
  select count(*) from
  Custom_Notification
