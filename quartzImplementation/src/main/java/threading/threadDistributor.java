@@ -1,6 +1,6 @@
 package threading;
 
-import DAO.JdbcOracleConnection;
+import DAO.NotificationProcessMessage;
 import Model.CustomNotification;
 
 import java.sql.Connection;
@@ -31,7 +31,7 @@ public class threadDistributor implements Runnable{
         // Message sent successfull
         Connection conn = null;
         try {
-            conn = JdbcOracleConnection.getconnection();
+            conn = NotificationProcessMessage.getconnection();
             String sql = "UPDATE Custom_Notification SET status=? where id = ?";
             PreparedStatement statement = conn.prepareStatement(sql);
 

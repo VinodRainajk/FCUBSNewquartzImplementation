@@ -2,15 +2,13 @@ package DAO;
 
 import Model.CustomNotification;
 import threading.QuartzExecutorService;
-import threading.loadProperties;
 import threading.mainExecutor;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-public class JdbcOracleConnection {
+public class NotificationProcessMessage {
 
 
     public static Connection getconnection() {
