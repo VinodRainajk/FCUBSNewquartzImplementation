@@ -2,14 +2,16 @@ package threading;
 
 import DAO.NotificationProcessMessage;
 import Model.CustomNotification;
+import Model.NotificationResult;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.Callable;
 
 import static java.lang.Thread.currentThread;
 
-public class threadDistributor implements Runnable{
+public class threadDistributor implements Callable<NotificationResult> {
 
     private CustomNotification customNotification;
 
@@ -21,7 +23,7 @@ public class threadDistributor implements Runnable{
     public CustomNotification getcustomNotification() {
         return customNotification;
     }
-
+/*
     @Override
     public void run() {
         System.out.println("The value sent as a param is " + customNotification.getMessage());
@@ -49,5 +51,25 @@ public class threadDistributor implements Runnable{
                 throw new RuntimeException(e);
             }
         }
+    }
+*/
+    @Override
+    public NotificationResult call() throws Exception {
+        NotificationResult notificationResult = new NotificationResult(customNotification.getId());
+
+      try{
+          System.out.println("The value sent as a param is " + customNotification.getMessage());
+          System.out.println("Thread executing value is  " + currentThread().getId());
+          //code to push message to Kafka/MQ
+          // Message sent successfull
+          notificationResult.setStatus("P");
+        }catch(Exception exp)
+        {
+
+            notificationResult.setStatus("E");
+        }
+
+
+        return notificationResult;
     }
 }

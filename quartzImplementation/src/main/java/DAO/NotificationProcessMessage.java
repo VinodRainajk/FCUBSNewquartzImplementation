@@ -1,15 +1,24 @@
 package DAO;
 
 import Model.CustomNotification;
+import Model.NotificationResult;
 import threading.QuartzExecutorService;
 import threading.loadProperties;
-import threading.mainExecutor;
+import threading.threadDistributor;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-public class NotificationProcessMessage {
+public class NotificationProcessMessage extends Thread{
+
+    @Override
+    public void run(){
+        System.out.println("NotificationProcessMessage thread is running...");
+        processMessage();
+    }
 
 
     public  Connection getconnection() {
@@ -40,10 +49,10 @@ public class NotificationProcessMessage {
         loadProperties loadproperties = new loadProperties();
         Integer limitRecord = Integer.valueOf(loadproperties.getPropertyValue("limitRecord"));
         //Integer limitRecord = 100;
-        List<CustomNotification> customNotificationList = new ArrayList<>();
+        List<threadDistributor> customNotificationList = new ArrayList<>();
         QuartzExecutorService quartzExecutorService = QuartzExecutorService.getQuartzExecutorService();
-        mainExecutor mainexecutor = new mainExecutor(quartzExecutorService);
-
+        //mainExecutor mainexecutor = new mainExecutor(quartzExecutorService);
+        List<Future<NotificationResult>> notificationresultList = null;
         try {
 
             if (conn2 != null) {
@@ -54,35 +63,75 @@ public class NotificationProcessMessage {
                 PreparedStatement pstmt =  conn2.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
                 pstmt.setFetchSize(5000);
                 ResultSet result = pstmt.executeQuery();
+
+                if (result.isBeforeFirst() )
+                {
+                    System.out.println("Update the status");
+                    Connection conn = getconnection();
+                    String sql2 = "UPDATE Custom_Job_Status SET job_status=? ";
+                    PreparedStatement statement = conn.prepareStatement(sql2);
+
+                    statement.setString(1, "W");
+                    int rowsUpdated = statement.executeUpdate();
+
+                }
+
                 int count = 0;
+
 
                 while (result.next()){
                     System.out.println("trip second ");
                     String id = result.getString("id");
                     String message = result.getString("message");
                     String queue_name = result.getString("queue_name");
-                    CustomNotification customNotification = new CustomNotification(id,message,queue_name);
-                    customNotificationList.add(customNotification);
+                    CustomNotification customnotification = new CustomNotification(id,message,queue_name);
+                    threadDistributor threaddistributor = new threadDistributor(customnotification);
+                    customNotificationList.add(threaddistributor);
 
-                    if(customNotificationList.size() == 100){
-                        mainexecutor.processMessage(customNotificationList);
-                        customNotificationList.clear();
-                    }
+
 
 
                 }
+
+                try {
+                    notificationresultList = quartzExecutorService.getExecutorService().invokeAll(customNotificationList);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 // catchup
-                if(customNotificationList.size() > 0){
+               /* if(customNotificationList.size() > 0){
                     mainexecutor.processMessage(customNotificationList);
 
-                }
+                }*/
                 System.out.println("Comming out of message push ");
 
+
+
+
+
             }
+            Connection conn3 = getconnection();
+            conn3 = getconnection();
+            for (int i = 0; i < notificationresultList.size(); i++) {
+                Future<NotificationResult> future = notificationresultList.get(i);
+                try {
+                    NotificationResult result = future.get();
+                    System.out.println(" result are " + result.getId() + ": " + result.getStatus());
+                    String sql = "UPDATE Custom_Notification SET status=? where id = ?";
+                    PreparedStatement statement = conn3.prepareStatement(sql);
+
+                    statement.setString(1, result.getStatus());
+                    statement.setString(2, result.getId()) ;
+                    int rowsUpdated = statement.executeUpdate();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
 
 
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        }
+    } catch (SQLException e) {
+            throw new RuntimeException(e);
         } finally {
             try {
                 System.out.println("shutting down the executor ");

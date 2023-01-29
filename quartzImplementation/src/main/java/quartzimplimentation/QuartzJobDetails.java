@@ -20,7 +20,8 @@ public class QuartzJobDetails implements Job {
         NotificationProcessMessage notificationProcessMessage = new NotificationProcessMessage();
        if(validateJobStaus(notificationProcessMessage.getconnection()))
            {
-               notificationProcessMessage.processMessage();
+               System.out.println("Main Thread Started");
+               notificationProcessMessage.start();
            }
         System.out.println("done QuartzJobDetails execute");
     }
