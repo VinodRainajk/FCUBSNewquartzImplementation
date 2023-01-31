@@ -4,9 +4,6 @@ import DAO.NotificationProcessMessage;
 import Model.CustomNotification;
 import Model.NotificationResult;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
 import static java.lang.Thread.currentThread;
