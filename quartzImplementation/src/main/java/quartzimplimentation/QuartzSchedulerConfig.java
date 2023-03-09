@@ -1,28 +1,30 @@
 package quartzimplimentation;
 
+import ExecutorService.ExecutorProperties;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
-public class QuartzSchedulerTrigger {
+public class QuartzSchedulerConfig {
 
     private static final String TRIGGER_NAME = "FCUBSTrigger";
     private static final String GROUP = "NotificationGroup";
     private static final String JOB_NAME = "NotificationTrigger";
     private static Scheduler scheduler;
-
     public static void main(String[] args) throws Exception {
         System.out.println(" QuartzSchedulerApp main thread: " + Thread.currentThread().getName());
-
-        scheduler = new StdSchedulerFactory().getScheduler();
+        ExecutorProperties properties = new ExecutorProperties();
+        SchedulerFactory sf = new StdSchedulerFactory(properties.readPropertiesFile("src/main/resources/quartz.properties"));
+        scheduler = sf.getScheduler();
         scheduler.start();
         Trigger trigger =  buildSimpleSchedulerTrigger();
         scheduleJob(trigger);
 
     }
 
+
     private static void scheduleJob(Trigger trigger) throws Exception {
 
-        JobDetail Notifjobdetails = JobBuilder.newJob(QuartzJobDetails.class).withIdentity(JOB_NAME, GROUP).build();
+        JobDetail Notifjobdetails = JobBuilder.newJob(QuartzSchedulerExecutor.class).withIdentity(JOB_NAME, GROUP).build();
 
         scheduler.scheduleJob(Notifjobdetails, trigger);
 
@@ -38,5 +40,4 @@ public class QuartzSchedulerTrigger {
                 .build();
         return trigger;
     }
-
 }
