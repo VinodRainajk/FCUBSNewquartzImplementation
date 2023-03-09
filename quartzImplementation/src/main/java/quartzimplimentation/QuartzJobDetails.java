@@ -18,14 +18,14 @@ public class QuartzJobDetails implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         System.out.println("Inside QuartzJobDetails execute");
         NotificationProcessMessage notificationProcessMessage = new NotificationProcessMessage();
-       if(validateJobStaus(notificationProcessMessage.getconnection()))
-           {
+      // if(validateJobStaus(notificationProcessMessage.getconnection()))
+          // {
                System.out.println("Main Thread Started");
                notificationProcessMessage.start();
-           }
+           //s}
         System.out.println("done QuartzJobDetails execute");
     }
-
+/*
     public boolean validateJobStaus(Connection connection)  {
        try
        {
@@ -62,4 +62,6 @@ public class QuartzJobDetails implements Job {
 
         return true;
     }
+
+ */
 }

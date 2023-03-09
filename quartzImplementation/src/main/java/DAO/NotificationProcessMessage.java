@@ -5,10 +5,11 @@ import Model.NotificationResult;
 import threading.QuartzExecutorService;
 import threading.loadProperties;
 import threading.threadDistributor;
-
+import  java.util.Date;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -22,12 +23,9 @@ public class NotificationProcessMessage extends Thread{
 
 
     public  Connection getconnection() {
-
         Connection conn = null;
         try {
             Class.forName("oracle.jdbc.OracleDriver");
-
-
             // METHOD #2
             String dbURL2 = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
             String username = "dev";
@@ -44,6 +42,7 @@ public class NotificationProcessMessage extends Thread{
 
 
     public void processMessage() {
+        UUID uuid=UUID.randomUUID();
         System.out.println("Inside  processMessage");
         Connection conn2 = getconnection();
         loadProperties loadproperties = new loadProperties();
@@ -54,16 +53,23 @@ public class NotificationProcessMessage extends Thread{
         try {
             if (conn2 != null) {
                 System.out.println("Getting the Unprocessed Message");
-                String sql = "select id,message,queue_name from Custom_Notification where nvl(status,'U') = 'U'  order by id";
+                String sql = "Insert into Scheduler_Job_Master (uniqueid, starttime) values(?,?)";
+                PreparedStatement statement = conn2.prepareStatement(sql);
+                statement.setString(1, uuid.toString());
+                statement.setTimestamp(2, new java.sql.Timestamp(new java.util.Date().getTime()));
+                statement.executeUpdate();
+
+                sql =  "UPDATE Custom_Notification SET uniqueid=? where nvl(status,'U') = 'U' and uniqueid is  Null ";
+                statement = conn2.prepareStatement(sql);
+                statement.setString(1, uuid.toString());
+                statement.executeUpdate();
+
+                sql = "select id,message,queue_name from Custom_Notification where nvl(status,'U') = 'U' and  uniqueid=? order by id";
                 PreparedStatement pstmt =  conn2.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                pstmt.setString(1,uuid.toString());
                 pstmt.setFetchSize(5000);
+
                 ResultSet result = pstmt.executeQuery();
-
-                if (result.isBeforeFirst() )
-                {
-                    updateJobStatus("W");
-                }
-
                 int count = 0;
                 while (result.next())
                 {
@@ -128,31 +134,7 @@ public class NotificationProcessMessage extends Thread{
             }
         }
 
-        updateJobStatus("C");
     }
 
-   private void updateJobStatus(String status)
-   {
-       Connection conn = getconnection();
-       try {
-           System.out.println("Update the status to" +status);
 
-           String sql2 = "UPDATE Custom_Job_Status SET job_status=? ";
-           PreparedStatement statement = conn.prepareStatement(sql2);
-           statement.setString(1, status);
-           int rowsUpdated = statement.executeUpdate();
-       }catch (Exception e)
-       {
-           e.printStackTrace();
-        }finally {
-           try {
-               if (conn != null && !conn.isClosed())
-               {
-                   conn.close();
-               }
-           } catch (SQLException ex) {
-               ex.printStackTrace();
-           }
-       }
-   }
 }

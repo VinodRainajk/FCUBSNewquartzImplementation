@@ -20,3 +20,7 @@ Create table Custom_Notification
  end;
 
 
+Create table Scheduler_Job_Master(uniqueid varchar2(2000), StartTime TIMESTAMP,EndTime TIMESTAMP);
+
+
+ALter table Custom_Notification add(uniqueid varchar2(2000));
