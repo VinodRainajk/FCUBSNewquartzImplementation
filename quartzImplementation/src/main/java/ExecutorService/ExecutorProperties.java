@@ -1,11 +1,11 @@
-package threading;
+package ExecutorService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-public class loadProperties {
+public class ExecutorProperties {
 
     public Properties readPropertiesFile(String fileName) throws IOException {
         FileInputStream fis = null;
@@ -14,9 +14,9 @@ public class loadProperties {
             fis = new FileInputStream(fileName);
             prop = new Properties();
             prop.load(fis);
-        } catch(FileNotFoundException fnfe) {
+        } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         } finally {
             fis.close();
@@ -25,21 +25,15 @@ public class loadProperties {
     }
 //
 
-    public String getPropertyValue(String PropertyName)  {
+    public String getPropertyValue(String PropertyName) {
 
-      try {
-          Properties prop = readPropertiesFile("src/main/resources/appilcation.properties");
-          return prop.getProperty(PropertyName);
-      }catch (Exception exp){
-          System.out.println("PropertyFile not Found");
-          exp.printStackTrace();
-          return null;
-      }
-
-
-
-
-
+        try {
+            Properties prop = readPropertiesFile("src/main/resources/appilcation.properties");
+            return prop.getProperty(PropertyName);
+        } catch (Exception exp) {
+            System.out.println("PropertyFile not Found");
+            exp.printStackTrace();
+            return null;
+        }
     }
-
 }

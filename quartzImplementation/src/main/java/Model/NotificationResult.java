@@ -1,20 +1,20 @@
 package Model;
 
 public class NotificationResult {
-    String id ;
+    String MsgRefNo ;
     String status;
     String resposeMessage;
 
     public NotificationResult(String id) {
-        this.id = id;
+        this.MsgRefNo = MsgRefNo;
     }
 
-    public String getId() {
-        return id;
+    public String getMsgRefNo() {
+        return MsgRefNo;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setMsgRefNo(String id) {
+        this.MsgRefNo = MsgRefNo;
     }
 
     public String getStatus() {
